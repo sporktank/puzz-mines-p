@@ -1,0 +1,140 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://EditorControls.gd" type="Script" id=1]
+[ext_resource path="res://elements/grass.png" type="Texture" id=2]
+[ext_resource path="res://elements/steel.png" type="Texture" id=3]
+
+[node name="EditorControls" type="Node2D"]
+script = ExtResource( 1 )
+
+[node name="Background" type="ColorRect" parent="."]
+margin_right = 200.0
+margin_bottom = 1000.0
+color = Color( 0.203922, 0.203922, 0.203922, 1 )
+
+[node name="LevelNumber" type="SpinBox" parent="."]
+margin_left = 10.0
+margin_top = 10.0
+margin_right = 190.0
+margin_bottom = 40.0
+min_value = 1.0
+max_value = 20.0
+value = 1.0
+prefix = "Level number:"
+
+[node name="LevelName" type="LineEdit" parent="."]
+margin_left = 10.0
+margin_top = 50.0
+margin_right = 190.0
+margin_bottom = 80.0
+max_length = 20
+placeholder_text = "[Level name]"
+
+[node name="SaveAndTest" type="Button" parent="."]
+margin_left = 10.0
+margin_top = 90.0
+margin_right = 100.0
+margin_bottom = 110.0
+text = "Save & test"
+
+[node name="Save" type="Button" parent="."]
+margin_left = 100.0
+margin_top = 90.0
+margin_right = 190.0
+margin_bottom = 110.0
+text = "Save"
+
+[node name="Clear" type="Button" parent="."]
+margin_left = 10.0
+margin_top = 120.0
+margin_right = 190.0
+margin_bottom = 140.0
+text = "Clear"
+
+[node name="Undo" type="Button" parent="."]
+margin_left = 10.0
+margin_top = 150.0
+margin_right = 100.0
+margin_bottom = 170.0
+text = "Undo"
+
+[node name="Redo" type="Button" parent="."]
+margin_left = 100.0
+margin_top = 150.0
+margin_right = 190.0
+margin_bottom = 170.0
+text = "Redo"
+
+[node name="LeftLabel" type="Label" parent="."]
+margin_left = 10.0
+margin_top = 180.0
+margin_right = 100.0
+margin_bottom = 200.0
+text = "Left button"
+align = 1
+valign = 1
+
+[node name="RightLabel" type="Label" parent="."]
+margin_left = 100.0
+margin_top = 180.0
+margin_right = 190.0
+margin_bottom = 200.0
+text = "Right button"
+align = 1
+valign = 1
+
+[node name="LeftElement" type="TextureRect" parent="."]
+margin_left = 10.0
+margin_top = 200.0
+margin_right = 190.0
+margin_bottom = 380.0
+rect_scale = Vector2( 0.5, 0.5 )
+texture = ExtResource( 2 )
+expand = true
+
+[node name="RightElement" type="TextureRect" parent="."]
+margin_left = 100.0
+margin_top = 200.0
+margin_right = 280.0
+margin_bottom = 380.0
+rect_scale = Vector2( 0.5, 0.5 )
+texture = ExtResource( 3 )
+expand = true
+
+[node name="ChestNumber" type="SpinBox" parent="."]
+margin_left = 10.0
+margin_top = 300.0
+margin_right = 190.0
+margin_bottom = 330.0
+min_value = 1.0
+max_value = 4.0
+value = 1.0
+prefix = "Chest number:"
+
+[node name="ChestTemp" type="ColorRect" parent="."]
+margin_left = 10.0
+margin_top = 340.0
+margin_right = 190.0
+margin_bottom = 510.0
+color = Color( 0, 0, 0, 1 )
+
+[node name="ElementList" type="ItemList" parent="."]
+margin_left = 10.0
+margin_top = 520.0
+margin_right = 190.0
+margin_bottom = 880.0
+allow_rmb_select = true
+max_columns = 3
+same_column_width = true
+icon_mode = 0
+fixed_icon_size = Vector2( 46, 46 )
+
+[node name="Errors" type="Label" parent="."]
+margin_left = 10.0
+margin_top = 890.0
+margin_right = 190.0
+margin_bottom = 990.0
+text = "Errors:
+[none]"
+[connection signal="item_rmb_selected" from="ElementList" to="." method="_on_ElementList_item_rmb_selected"]
+[connection signal="item_selected" from="ElementList" to="." method="_on_ElementList_item_selected"]
