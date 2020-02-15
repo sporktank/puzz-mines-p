@@ -12,9 +12,18 @@ animations = [ {
 "speed": 5.0
 } ]
 
-[node name="Element" instance=ExtResource( 1 )]
+[node name="Blank" instance=ExtResource( 1 )]
 script = ExtResource( 2 )
 
 [node name="AnimatedSprite" parent="." index="0"]
 frames = SubResource( 1 )
 animation = "still"
+
+[node name="ColorRect" type="ColorRect" parent="." index="1"]
+margin_left = -7.06963
+margin_top = -5.09746
+margin_right = 2.93037
+margin_bottom = 5.90254
+__meta__ = {
+"_edit_use_anchors_": false
+}

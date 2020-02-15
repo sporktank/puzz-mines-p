@@ -11,3 +11,9 @@ func is_blank():
 
 func is_collectable():
     return true
+
+
+func apply_action(action):
+        
+    if action is Actions.Explode:
+        self.replace_me('explosion', {'produce':action.get_produce(self)})

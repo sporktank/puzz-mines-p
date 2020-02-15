@@ -13,19 +13,6 @@ func is_collectable():
     return true
     
 
-#func compute_actions():
-#
-#    # Falling.
-#    if self.s.is_blank():
-#        self.add_action(MOVE_S)
-#
-#    # Roll left.
-#    if self.w.is_blank() and self.sw.is_blank() and self.s.is_rollable():
-#        self.add_action(MOVE_W)
-#
-#    # Roll left.
-#    if self.e.is_blank() and self.se.is_blank() and self.s.is_rollable():
-#        self.add_action(MOVE_E)
 func compute_actions():
     
     if self.s.is_blank():
@@ -44,5 +31,8 @@ func apply_action(action):
         self.setup(action.x, action.y)
         
     if action is Actions.Collect:
-        return Actions.ActionResult.new(true)
+        self.remove_me()
+        
+    if action is Actions.Explode:
+        self.replace_me('explosion', {'produce':action.get_produce(self)})
         

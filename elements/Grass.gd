@@ -12,5 +12,7 @@ func is_collectable():
 func apply_action(action):
     
     if action is Actions.Collect:
-        return Actions.ActionResult.new(true)
+        self.remove_me()
         
+    if action is Actions.Explode:
+         self.replace_me('explosion', {'produce':action.get_produce(self)})

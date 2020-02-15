@@ -47,6 +47,8 @@ class ActionMap:
         var num_all = list.size()
         var num_move = _count_class(list, Actions.Move)
         var num_collect = _count_class(list, Actions.Collect)
+        var num_explode = _count_class(list, Actions.Explode)
+        var num_wait = _count_class(list, Actions.Wait)
         
         # If all actions are moves, take top priority action only.
         if num_all == num_move:
@@ -57,19 +59,34 @@ class ActionMap:
         # If one move and one collect, that's fine.
         if num_move == 1 and num_collect == 1 and num_all == 2:
             return
+            
+        # If only one explosion, that takes priority.
+        #if num_explode == 1:
+        #    for i in range(0, num_all-1):
+        #        list[i].invalidate()
+        #    return
+            
+        # If all but one are waits, that's fine.
+        #if num_wait == num_all-1:
+        #    return
         
-        print('Unhandled conflict of %d actions (taking top priority action only by default):' % [num_all])
+        # Multiple explosions are fine.
+        #if num_explode + num_wait == num_all:
+        #    return
+        
+        print('Unhandled conflict of %d actions (taking top priority action(s) only by default):' % [num_all])
         for action in list:
             print(action.to_string())
         print('.')
-        for i in range(0, num_all-1):
-            list[i].invalidate()
+        for i in range(0, num_all):
+            if list[i].priority != list[num_all-1].priority:
+                list[i].invalidate()
 
 
-class ActionResult:
-    var delete_me
-    func _init(delete_me):
-        self.delete_me = delete_me
+#class ActionResult:
+#    var delete_me
+#    func _init(delete_me):
+#        self.delete_me = delete_me
         
 
 class Action:
@@ -84,7 +101,17 @@ class Action:
         pass
     func to_string():
         pass
-    
+
+
+class Wait extends Action:
+    func _init(element, priority):
+        self.element = element
+        self.priority = priority
+    func get_all_xy():
+        return [[self.element.map_x, self.element.map_y]]
+    func to_string():
+        return 'Wait(%s, priority=%d)' % [self.element.get_element_name(), self.priority]
+
 
 class Move extends Action:
     var x
@@ -97,7 +124,7 @@ class Move extends Action:
     func get_all_xy():
         return [[self.element.map_x, self.element.map_y], [x, y]]
     func to_string():
-        return 'Move(%s, dx=%d, dy=%d)' % [self.element.get_element_name(), self.x-self.element.map_x, self.y-self.element.map_y]
+        return 'Move(%s, dx=%d, dy=%d, priority=%d)' % [self.element.get_element_name(), self.x-self.element.map_x, self.y-self.element.map_y, self.priority]
         
 
 class Collect extends Action:
@@ -107,9 +134,9 @@ class Collect extends Action:
         self.by = by
         self.priority = priority
     func get_all_xy():
-        return [[self.element.map_x, self.element.map_y]]#, [self.by.map_x, self.by.map_y]]
+        return [[self.element.map_x, self.element.map_y], [self.by.map_x, self.by.map_y]]
     func to_string():
-        return 'Collect(%s, by=%s)' % [self.element.get_element_name(), self.by.get_element_name()]
+        return 'Collect(%s, by=%s, priority=%d)' % [self.element.get_element_name(), self.by.get_element_name(), self.priority]
         
 
 class Push extends Action:
@@ -127,7 +154,7 @@ class Push extends Action:
     func get_all_xy():
         return [[self.element.map_x, self.element.map_y], [self.by.map_x, self.by.map_y], [self.x, self.y]]
     func to_string():
-        return 'Push(%s, by=%s, dx=%d, dy=%d)' % [self.element.get_element_name(), self.by.get_element_name(), self.x-self.element.map_x, self.y-self.element.map_y]
+        return 'Push(%s, by=%s, dx=%d, dy=%d, priority=%d)' % [self.element.get_element_name(), self.by.get_element_name(), self.x-self.element.map_x, self.y-self.element.map_y, self.priority]
         
         
 class Rotate extends Action:
@@ -139,5 +166,38 @@ class Rotate extends Action:
     func get_all_xy():
         return [[self.element.map_x, self.element.map_y]]
     func to_string():
-        return 'Rotate(%s, cw=%d)' % [self.element.get_element_name(), self.cw]
+        return 'Rotate(%s, cw=%s, priority=%d)' % [self.element.get_element_name(), self.cw, self.priority]
         
+
+#class Crush extends Action:
+#    var by
+#    func _init(element, by, priority):
+#        self.element = element
+#        self.by = by
+#        self.priority = priority
+#    func get_elements():
+#        return [self.by, self.element]  # NOTE: Sublte order dependency here.. might try to remove this.
+#    func get_all_xy():
+#        return [[self.element.map_x, self.element.map_y], [self.by.map_x, self.by.map_y]]
+#    func to_string():
+#        return 'Crush(%s, by=%s)' % [self.element.get_element_name(), self.by.get_element_name()]
+        
+
+class Explode extends Action:
+    var nh
+    var produce
+    func _init(element, nh, produce, priority):
+        self.element = element
+        self.nh = nh
+        self.produce = produce
+        self.priority = priority
+    func get_elements():
+        return [self.element] + (self.element.get_neighbourhood() if self.nh else [])
+    func get_all_xy():
+        var x = self.element.map_x
+        var y = self.element.map_y
+        return [[x,y]] if not self.nh else [[x-1, y-1], [x, y-1], [x+1,y-1], [x-1,y], [x,y], [x+1,y], [x-1,y+1], [x,y+1], [x+1,y+1]]
+    func to_string():
+        return 'Explode(%s, %d, %d, %s, priority=%d)' % [self.element.get_element_name(), self.element.map_x, self.element.map_y, self.nh, self.priority]
+    func get_produce(e):
+        return self.produce[1 + e.map_y - self.element.map_y][1 + e.map_x - self.element.map_x]

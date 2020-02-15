@@ -1,27 +1,20 @@
 extends "res://Element.gd"
 
 
-const FACING_ROTATE = [
-        {
-            [-1, 0]: [ 0, 1],
-            [ 0, 1]: [ 1, 0],
-            [ 1, 0]: [ 0,-1],
-            [ 0,-1]: [-1, 0],
-        },
-        {
-            [-1, 0]: [ 0,-1],
-            [ 0,-1]: [ 1, 0],
-            [ 1, 0]: [ 0, 1],
-            [ 0, 1]: [-1, 0],
-        }
-    ]
-
 var facing = [-1, 0]
 var last_rotate = false
 
 
 func get_element_name():
     return 'ladybug'
+
+
+func is_bonkable():
+    return true
+    
+    
+func get_produce():
+    return [['goldcoin', 'goldcoin', 'goldcoin'], ['goldcoin', 'goldcoin', 'goldcoin'], ['goldcoin', 'goldcoin', 'goldcoin']]
 
 
 func is_facing(element):
@@ -56,6 +49,7 @@ func compute_actions():
 #            (self.is_facing(self.s) and self.w.is_blank())):
     return [Actions.Rotate.new(self, true, 20)]
 
+
 func apply_action(action):
     
     if action is Actions.Move:
@@ -67,3 +61,8 @@ func apply_action(action):
         $AnimatedSprite.rotation = Vector2(-self.facing[0], -self.facing[1]).angle()
         self.last_rotate = true
     
+    if action is Actions.Explode:
+        if action.element == self:
+            self.replace_me('explosion', {'produce':action.get_produce(self)})
+        else:
+            self.replace_me('explosion', {'produce':'explosion', 'explosion_produce':self.get_produce()})

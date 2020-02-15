@@ -9,91 +9,7 @@ var mode = EDIT
 var element_map = {}
 
 
-#class Neighbourhood:
-#
-#    var nw
-#    var n
-#    var ne
-#    var w
-#    var e
-#    var sw
-#    var s
-#    var se
-#
-#    func _init(nw, n, ne, w, e, sw, s, se):
-#        self.nw = nw
-#        self.n = n
-#        self.ne = ne
-#        self.w = w
-#        self.e = e
-#        self.sw = sw
-#        self.s = s
-#        self.se = se
-#
-#    func to_string():
-#        return str([
-#                [self.nw.get_element_name(), self.n.get_element_name(), self.ne.get_element_name()],
-#                [self.w.get_element_name(), '[self]', self.e.get_element_name()],
-#                [self.sw.get_element_name(), self.s.get_element_name(), self.se.get_element_name()]
-#            ])
-#
-#
-#func compute_next_element_map():
-#
-#    # Clear actions.
-#    for element in $Elements.get_children():
-#        element.reset_actions()
-#
-#    # Compute desired actions.
-#    for y in range(1, self.LEVEL_SIZE.y-1):
-#        for x in range(1, self.LEVEL_SIZE.x-1):
-#            var nh = Neighbourhood.new(
-#                    self.element_map[[x-1, y-1]], self.element_map[[x  , y-1]], self.element_map[[x+1, y-1]], 
-#                    self.element_map[[x-1, y  ]],                               self.element_map[[x+1, y  ]], 
-#                    self.element_map[[x-1, y+1]], self.element_map[[x  , y+1]], self.element_map[[x+1, y+1]]
-#                )
-#            self.element_map[[x,y]].compute_actions(nh)
-#
-#    # Resolve conflicts.
-#    for element in $Elements.get_children():
-#        if element.possible_actions.size() > 1:
-#            element.resolve_actions()
-#
-#    # TODO: Thinking to do this in the order order.
-#    # Remove blanks.
-#    for element in $Elements.get_children():
-#        if element.is_blank():
-#            $Elements.remove_child(element)
-#            element.queue_free()
-#
-#    # Apply actions.
-#    var new_element_map = {}
-#    for element in $Elements.get_children():
-#        if element.possible_actions.size() == 0:
-#            new_element_map[[element.map_x, element.map_y]] = element
-#        else:
-#            var result = element.take_action(element.possible_actions[0])
-#            if result.new_element:
-#                print('Need new element!')
-#            else:
-#                new_element_map[[result.new_map_x, result.new_map_y]] = element.setup(result.new_map_x, result.new_map_y)
-#
-#    # Fill in blanks.
-#    for y in range(1, self.LEVEL_SIZE.y-1):
-#        for x in range(1, self.LEVEL_SIZE.x-1):
-#            if not new_element_map.has([x,y]):
-#                var element = Global.ALL_ELEMENTS['blank'].instance().setup(x, y)
-#                new_element_map[[x,y]] = element
-#                $Elements.add_child(element)
-#
-#    return new_element_map
-
-
-func compute_actions():
-    
-#    # Clear actions.
-#    for element in $Elements.get_children():
-#        element.reset_actions()
+func compute_actions(next_actions):
         
     # Setup neighbourhoods.
     for y in range(1, self.LEVEL_SIZE.y-1):
@@ -108,66 +24,55 @@ func compute_actions():
     
     # Compute actions.
     var action_map = Actions.ActionMap.new(LEVEL_SIZE)
+    for action in next_actions:
+        action_map.add_action(action)
     for element in $Elements.get_children():
         var actions = element.compute_actions()
         if actions:
             for action in actions:
                 action_map.add_action(action)
 
-#    # Resolve conflicts.
-#    for element in $Elements.get_children():
-#        if element.possible_actions.size() > 1:
-#            element.resolve_actions()
-
-#    for i in action_map.actions:
-#        if action_map.actions[i].size() > 1:
-#            #print('Conflict!')
-#            #for action in action_map.actions[i]:
-#            #    print(action.to_string())
-#            #print('.')
-#            # For testing just invalidate all but first one.
-#            for action in action_map.actions[i][1:]:
-#                action.invalidate()
+    # Resolve conflicts.
+    print('-->', action_map.actions[[13,7]])
     action_map.resolve_conflicts()
-    
     return action_map.get_actions()
     
 
-#func apply_actions():
-#    var new_element_map = {}
-#    for element in $Elements.get_children():
-#        if element.possible_actions.size() == 0:
-#            new_element_map[[element.map_x, element.map_y]] = element
-#        else:
-#            var result = element.apply_action(element.possible_actions[0])
-#            if result.delete_element:
-#                $Elements.remove_child(element)
-#            elif result.new_element:
-#                print('Need new element!')
-#            else:
-#                new_element_map[[result.new_map_x, result.new_map_y]] = element.setup(result.new_map_x, result.new_map_y)
-#    self.element_map = new_element_map
 func apply_actions(actions):
+    
+    var result = []
+    
     for action in actions:
         for element in action.get_elements():
-            var action_result = element.apply_action(action)
-            if action_result and action_result.delete_me:
-                $Elements.remove_child(action.element)
-                action.element.queue_free()
+            # Testing: skip if element already removed.
+            if element.get_parent() == null:
+                print('Skipping action on orphaned element (%s).' % [element.to_string()])
+                continue
+            var next_actions = element.apply_action(action)
+            if next_actions:
+                for next_action in next_actions:
+                    result.append(next_action)
+                    
+    #for element in $Elements.get_children():
+    #    element.apply_action('idle')
+                    
     self.element_map = {}
     for element in $Elements.get_children():
-        self.element_map[[element.map_x, element.map_y]] = element
+        if element.is_blank():
+            $Elements.remove_child(element)
+            element.queue_free()
+        else:
+            self.element_map[[element.map_x, element.map_y]] = element
+        
+    return result
 
 
-var timer = 0.0
+var next_actions = []
 func _process(delta):
-    timer += delta
-    if Input.is_action_just_pressed("ui_accept") or timer > 0.2:
-        timer = 0.0
-        #self.element_map = self.compute_next_element_map()
-        var actions = self.compute_actions()
-        #self.animate_actions()
-        self.apply_actions(actions)
+    if Input.is_action_just_pressed("ui_accept"):
+        var actions = self.compute_actions(next_actions)
+        next_actions = self.apply_actions(actions)
+        print('-----')
                 
 
 func clear_level():
@@ -183,7 +88,11 @@ func get_element(x, y):
     if self.element_map.has([x,y]):
         return self.element_map[[x,y]]
     else:
-        return Global.ALL_ELEMENTS['blank'].instance().setup(x, y)
+        var element = Global.ALL_ELEMENTS['blank'].instance().setup(x, y)
+        self.element_map[[x,y]] = element
+        $Elements.add_child(element)
+        return element
+    
 
 
 func set_element(x, y, element_name):
@@ -255,21 +164,3 @@ func save_to_file():
     file.open('res://levels/1.json', File.WRITE)
     file.store_line(self.to_json_())
     file.close()
-    
-
-#func add_element(e):
-#    # TODO: Add check that not going over existing element.
-#    $Elements.add_child(e)
-#
-#
-#func load_level(level_map):
-#
-#    self.clear_level()
-#
-#    # Test data.
-#    var steel = load("res://elements/Steel.tscn")
-#    var grass = load("res://elements/Grass.tscn")
-#    for y in range(self.LEVEL_SIZE.y):
-#        for x in range(self.LEVEL_SIZE.x):
-#            var e = steel.instance() if x == 0 or y == 0 or x == self.LEVEL_SIZE.x-1 or y == self.LEVEL_SIZE.y-1 else grass.instance()
-#            self.add_element(e.setup(x, y))
