@@ -4,8 +4,10 @@ extends Node2D
 func _ready():
     $EditorControls/Clear.connect('pressed', self, '_on_Clear_pressed')
     $EditorControls/Save.connect('pressed', self, '_on_Save_pressed')
+    $EditorControls/Coins.connect('value_changed', self, '_on_Coins_value_changed')
     $Level.set_edit_mode()
     $Level.load_from_file()
+    $EditorControls/Coins.value = $Level.coins_required
 
 
 func _process(delta):
@@ -28,3 +30,6 @@ func _on_Clear_pressed():
 func _on_Save_pressed():
     $Level.save_to_file()
     
+
+func _on_Coins_value_changed(value):
+    $Level.coins_required = $EditorControls/Coins.value

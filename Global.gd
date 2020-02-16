@@ -14,6 +14,9 @@ const ALL_ELEMENTS = {
     'ladybug': preload("res://elements/LadyBug.tscn"),
     'explosion': preload("res://elements/Explosion.tscn"),
     'tnt': preload("res://elements/TNT.tscn"),
+    'mystery': preload("res://elements/Mystery.tscn"),
+    'brick': preload("res://elements/Brick.tscn"),
+    'exit': preload("res://elements/Exit.tscn"),
 }
 
 

@@ -36,6 +36,15 @@ func compute_actions():
 #    return [Actions.Wait.new(self, -10)]
 
 
+func animate_action(action, alpha):
+    
+    if action is Actions.Move or (action is Actions.Push and action.element == self):
+        self.position = self.screen_pos()*(1-alpha) + self.screen_pos(action.x, action.y)*alpha
+        
+    if action is Actions.Explode:
+        self.animate_explode(alpha)
+
+
 func apply_action(action):
 
     self.falling = false

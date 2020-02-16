@@ -118,16 +118,30 @@ margin_right = 190.0
 margin_bottom = 510.0
 color = Color( 0, 0, 0, 1 )
 
-[node name="ElementList" type="ItemList" parent="."]
+[node name="Coins" type="SpinBox" parent="."]
 margin_left = 10.0
 margin_top = 520.0
+margin_right = 190.0
+margin_bottom = 550.0
+max_value = 99999.0
+prefix = "Coins required:"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ElementList" type="ItemList" parent="."]
+margin_left = 10.0
+margin_top = 560.0
 margin_right = 190.0
 margin_bottom = 880.0
 allow_rmb_select = true
 max_columns = 3
 same_column_width = true
 icon_mode = 0
-fixed_icon_size = Vector2( 46, 46 )
+fixed_icon_size = Vector2( 28, 28 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="Errors" type="Label" parent="."]
 margin_left = 10.0

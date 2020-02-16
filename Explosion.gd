@@ -24,6 +24,22 @@ func compute_actions():
     return [Actions.Wait.new(self, 40)]
 
 
+func animate_action(action, alpha):
+        
+    if action is Actions.Wait:
+        $AnimatedSprite.modulate.a = 0
+        if self.wait == 1:
+            $Explode1.modulate.a = clamp(1 - 2*alpha, 0, 1)
+            $Explode2.modulate.a = clamp(2*alpha, 0, 1) if alpha < 0.5 else clamp(2 - 2*alpha, 0, 1)
+            $Explode3.modulate.a = clamp(-1 + 2*alpha, 0, 1)
+            $Explode4.modulate.a = 0
+        else:
+            $Explode1.modulate.a = 0
+            $Explode2.modulate.a = 0
+            $Explode3.modulate.a = clamp(1 - 2*alpha, 0, 1)
+            $Explode4.modulate.a = clamp(2*alpha, 0, 1) if alpha < 0.5 else clamp(2 - 2*alpha, 0, 1)
+
+
 func apply_action(action):
     
     if self.wait == 0 and action is Actions.Wait:

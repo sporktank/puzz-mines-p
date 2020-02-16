@@ -9,5 +9,8 @@ script = ExtResource( 1 )
 margin_right = 1500.0
 margin_bottom = 1000.0
 color = Color( 0, 0, 0, 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="Elements" type="Node2D" parent="."]

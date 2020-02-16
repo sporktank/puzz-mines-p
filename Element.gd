@@ -44,6 +44,11 @@ func setup(x, y, extra_args={}):
     return self
 
 
+func screen_pos(x=null, y=null):
+    var v = Vector2(self.map_x, self.map_y) if x == null and y == null else Vector2(x, y)
+    return (v + Vector2(0.5, 0.5)) * Global.TILE_SIZE
+
+
 func remove_me():
     get_parent().remove_child(self)
     self.queue_free()
@@ -104,6 +109,14 @@ func is_blank():
     return false
     
 
+func is_player():
+    return false
+    
+    
+func is_exit():
+    return false
+    
+
 func is_rollable():
     return false
 
@@ -113,6 +126,10 @@ func is_collectable():
     
 
 func is_pushable():
+    return false
+    
+    
+func is_vpushable():
     return false
     
 
@@ -126,7 +143,17 @@ func get_produce():
 
 func compute_actions():
     pass
-    
+
+
+func animate_action(action, alpha):
+    pass
+        
+        
+func animate_explode(alpha):
+    $AnimatedSprite.modulate.a = 1-alpha
+    $Explode0.modulate.a = 2*alpha if alpha < 0.5 else 2-2*alpha
+    $Explode1.modulate.a = clamp(-1 + 2*alpha, 0, 1)
+
 
 func apply_action(action):
     pass

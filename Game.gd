@@ -10,3 +10,8 @@ func _process(delta):
     if Input.is_action_pressed("ui_cancel"):
         get_tree().quit()
         
+    $HUD/Required.text = "coins: %d / %d" % [$Level.coins_collected, $Level.coins_required]
+        
+
+func _on_Restart_pressed():
+    $Level.restart()

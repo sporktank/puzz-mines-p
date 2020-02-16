@@ -126,6 +126,20 @@ class Move extends Action:
     func to_string():
         return 'Move(%s, dx=%d, dy=%d, priority=%d)' % [self.element.get_element_name(), self.x-self.element.map_x, self.y-self.element.map_y, self.priority]
         
+        
+class Exit extends Action:
+    var exit
+    func _init(element, exit, priority):
+        self.element = element
+        self.exit = exit
+        self.priority = priority
+    func get_elements():
+        return [self.element, self.exit]
+    func get_all_xy():
+        return [[self.element.map_x, self.element.map_y], [self.exit.map_x, self.exit.map_y]]
+    func to_string():
+        return 'Exit(priority=%d)' % [self.priority]
+        
 
 class Collect extends Action:
     var by

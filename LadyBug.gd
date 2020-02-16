@@ -25,10 +25,10 @@ func compute_actions():
 
     # Rotate left.
     if not self.last_rotate and (
-            (self.is_facing(self.w) and self.s.is_blank()) or
-            (self.is_facing(self.s) and self.e.is_blank()) or
-            (self.is_facing(self.e) and self.n.is_blank()) or
-            (self.is_facing(self.n) and self.w.is_blank())):
+            (self.is_facing(self.w) and (self.s.is_blank() or self.s.is_player())) or
+            (self.is_facing(self.s) and (self.e.is_blank() or self.e.is_player())) or
+            (self.is_facing(self.e) and (self.n.is_blank() or self.n.is_player())) or
+            (self.is_facing(self.n) and (self.w.is_blank() or self.w.is_player()))):
         return [Actions.Rotate.new(self, false, 20)]
 
     # Movement.
@@ -40,7 +40,17 @@ func compute_actions():
         return [Actions.Move.new(self, self.map_x+1, self.map_y, 5)]
     if self.is_facing(self.n) and self.n.is_blank():
         return [Actions.Move.new(self, self.map_x, self.map_y-1, 5)]
-        
+    
+    # Kill.
+    if self.is_facing(self.w) and self.w.is_player():
+        return [Actions.Explode.new(self.w, false, self.w.get_produce(), 4)]  # Lower priority allowing player to walk past.
+    if self.is_facing(self.s) and self.s.is_player():
+        return [Actions.Explode.new(self.s, false, self.s.get_produce(), 4)]
+    if self.is_facing(self.e) and self.e.is_player():
+        return [Actions.Explode.new(self.e, false, self.e.get_produce(), 4)]
+    if self.is_facing(self.n) and self.n.is_player():
+        return [Actions.Explode.new(self.n, false, self.n.get_produce(), 4)]
+    
     # Rotate right. -- TODO: By default?
 #    if (
 #            (self.is_facing(self.w) and self.n.is_blank()) or
@@ -48,6 +58,19 @@ func compute_actions():
 #            (self.is_facing(self.e) and self.s.is_blank()) or
 #            (self.is_facing(self.s) and self.w.is_blank())):
     return [Actions.Rotate.new(self, true, 20)]
+
+
+func animate_action(action, alpha):
+    
+    if action is Actions.Move:
+        self.position = self.screen_pos()*(1-alpha) + self.screen_pos(action.x, action.y)*alpha
+
+    if action is Actions.Rotate:
+        # TODO: This looks quite ugly.
+        $AnimatedSprite.rotation = Vector2(-self.facing[0], -self.facing[1]).angle() + (2*int(action.cw)-1)*PI/2*alpha
+
+    if action is Actions.Explode:
+        self.animate_explode(alpha)
 
 
 func apply_action(action):

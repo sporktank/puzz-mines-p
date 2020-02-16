@@ -3,10 +3,30 @@ extends Node2D
 
 const LEVEL_SIZE = Vector2(30, 20)
 enum {EDIT, PLAY}
+#const TIMER_INTERVAL = 16#36#12
+const SECONDS_PER_STEP = 0.25
 
 
 var mode = EDIT
 var element_map = {}
+var actions = []
+var next_actions = []
+var timer = 0.0
+
+var coins_required = 0
+var coins_collected = 0
+
+
+func restart():
+    self.actions = []
+    self.next_actions = []
+    self.timer = 0.0
+    self.coins_collected = 0
+    self.load_from_file()
+    
+    
+func _ready():
+    self.restart()
 
 
 func compute_actions(next_actions):
@@ -33,10 +53,15 @@ func compute_actions(next_actions):
                 action_map.add_action(action)
 
     # Resolve conflicts.
-    print('-->', action_map.actions[[13,7]])
     action_map.resolve_conflicts()
     return action_map.get_actions()
-    
+
+
+func animate_actions(actions, alpha):
+    for action in actions:
+        for element in action.get_elements():
+            element.animate_action(action, alpha)
+            
 
 func apply_actions(actions):
     
@@ -67,13 +92,37 @@ func apply_actions(actions):
     return result
 
 
-var next_actions = []
+#func _process(delta):
+#    if Input.is_action_just_pressed("ui_accept"):
+#        var actions = self.compute_actions(next_actions)
+#        next_actions = self.apply_actions(actions)
+#        print('-----')
+#func _physics_process(delta):
+#    if self.mode == PLAY:
+#
+#        #if self.timer in [0, int(TIMER_INTERVAL/2), TIMER_INTERVAL-1]:
+#        #    print(self.timer)
+#
+#        if self.timer == 0:
+#            self.actions = self.compute_actions(self.next_actions)
+#            self.timer += 1  # Get off first frame of animation to make it look smooth.
+#
+#        if self.timer >= 0 and self.timer < TIMER_INTERVAL:
+#            self.animate_actions(self.actions, self.timer/float(TIMER_INTERVAL))
+#
+#        if self.timer == TIMER_INTERVAL:
+#            self.next_actions = self.apply_actions(self.actions)
+#
+#        self.timer = (self.timer + 1) % (TIMER_INTERVAL+1)
 func _process(delta):
-    if Input.is_action_just_pressed("ui_accept"):
-        var actions = self.compute_actions(next_actions)
-        next_actions = self.apply_actions(actions)
-        print('-----')
-                
+    if self.mode == PLAY:
+        self.timer += clamp(delta, 0, SECONDS_PER_STEP)
+        if self.timer >= SECONDS_PER_STEP:
+            self.next_actions = self.apply_actions(self.actions)
+            self.actions = self.compute_actions(self.next_actions)
+            self.timer -= SECONDS_PER_STEP
+        self.animate_actions(self.actions, self.timer/SECONDS_PER_STEP)
+
 
 func clear_level():
     for e in $Elements.get_children():
@@ -88,11 +137,11 @@ func get_element(x, y):
     if self.element_map.has([x,y]):
         return self.element_map[[x,y]]
     else:
+        # Filling in blanks if they don't exist.
         var element = Global.ALL_ELEMENTS['blank'].instance().setup(x, y)
         self.element_map[[x,y]] = element
         $Elements.add_child(element)
         return element
-    
 
 
 func set_element(x, y, element_name):
@@ -135,8 +184,9 @@ func to_json_():
             row.append(self.element_map[[x,y]].get_element_name())
         element_map_names.append(row)
     return to_json({
-        'element_map_names': element_map_names
-       })
+            'element_map_names': element_map_names,
+            'coins_required': self.coins_required
+        })
 
 
 func from_json(json):
@@ -149,6 +199,7 @@ func from_json(json):
             self.set_element(x, y, name)
             x += 1
         y += 1
+    self.coins_required = dict.get('coins_required', 0)
 
 
 func load_from_file():
