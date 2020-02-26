@@ -12,117 +12,250 @@ margin_right = 200.0
 margin_bottom = 1000.0
 color = Color( 0.203922, 0.203922, 0.203922, 1 )
 
-[node name="LevelNumber" type="SpinBox" parent="."]
+[node name="LevelSet" type="OptionButton" parent="."]
 margin_left = 10.0
 margin_top = 10.0
 margin_right = 190.0
 margin_bottom = 40.0
-min_value = 1.0
-max_value = 20.0
-value = 1.0
-prefix = "Level number:"
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
-[node name="LevelName" type="LineEdit" parent="."]
+[node name="LevelNumber" type="SpinBox" parent="."]
 margin_left = 10.0
 margin_top = 50.0
 margin_right = 190.0
 margin_bottom = 80.0
-max_length = 20
+min_value = 1.0
+max_value = 10.0
+value = 1.0
+prefix = "Level number:"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="LevelName" type="LineEdit" parent="."]
+margin_left = 10.0
+margin_top = 90.0
+margin_right = 190.0
+margin_bottom = 120.0
+max_length = 40
 placeholder_text = "[Level name]"
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="SaveAndTest" type="Button" parent="."]
 margin_left = 10.0
-margin_top = 90.0
+margin_top = 130.0
 margin_right = 100.0
-margin_bottom = 110.0
-text = "Save & test"
+margin_bottom = 150.0
+text = "Test (F5)"
 
 [node name="Save" type="Button" parent="."]
 margin_left = 100.0
-margin_top = 90.0
+margin_top = 130.0
 margin_right = 190.0
-margin_bottom = 110.0
-text = "Save"
+margin_bottom = 150.0
+text = "Save (Ctrl-S)"
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="Clear" type="Button" parent="."]
-margin_left = 10.0
-margin_top = 120.0
+margin_left = 140.0
+margin_top = 160.0
 margin_right = 190.0
-margin_bottom = 140.0
+margin_bottom = 210.0
 text = "Clear"
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="Undo" type="Button" parent="."]
 margin_left = 10.0
-margin_top = 150.0
-margin_right = 100.0
-margin_bottom = 170.0
-text = "Undo"
+margin_top = 160.0
+margin_right = 140.0
+margin_bottom = 180.0
+disabled = true
+text = "Undo (Ctrl-Z)"
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="Redo" type="Button" parent="."]
-margin_left = 100.0
-margin_top = 150.0
-margin_right = 190.0
-margin_bottom = 170.0
-text = "Redo"
+margin_left = 10.0
+margin_top = 190.0
+margin_right = 140.0
+margin_bottom = 210.0
+disabled = true
+text = "Redo (Ctrl-Shift-Z)"
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="LeftLabel" type="Label" parent="."]
 margin_left = 10.0
-margin_top = 180.0
+margin_top = 220.0
 margin_right = 100.0
-margin_bottom = 200.0
+margin_bottom = 240.0
 text = "Left button"
 align = 1
 valign = 1
 
 [node name="RightLabel" type="Label" parent="."]
 margin_left = 100.0
-margin_top = 180.0
+margin_top = 220.0
 margin_right = 190.0
-margin_bottom = 200.0
+margin_bottom = 240.0
 text = "Right button"
 align = 1
 valign = 1
 
 [node name="LeftElement" type="TextureRect" parent="."]
 margin_left = 10.0
-margin_top = 200.0
+margin_top = 240.0
 margin_right = 190.0
-margin_bottom = 380.0
+margin_bottom = 420.0
 rect_scale = Vector2( 0.5, 0.5 )
 texture = ExtResource( 2 )
 expand = true
 
 [node name="RightElement" type="TextureRect" parent="."]
 margin_left = 100.0
-margin_top = 200.0
+margin_top = 240.0
 margin_right = 280.0
-margin_bottom = 380.0
+margin_bottom = 420.0
 rect_scale = Vector2( 0.5, 0.5 )
 texture = ExtResource( 3 )
 expand = true
 
 [node name="ChestNumber" type="SpinBox" parent="."]
 margin_left = 10.0
-margin_top = 300.0
+margin_top = 340.0
 margin_right = 190.0
-margin_bottom = 330.0
+margin_bottom = 370.0
 min_value = 1.0
 max_value = 4.0
 value = 1.0
 prefix = "Chest number:"
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
-[node name="ChestTemp" type="ColorRect" parent="."]
+[node name="Chest11" type="TextureRect" parent="."]
 margin_left = 10.0
-margin_top = 340.0
+margin_top = 380.0
+margin_right = 130.0
+margin_bottom = 500.0
+rect_scale = Vector2( 0.5, 0.5 )
+texture = ExtResource( 2 )
+expand = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Chest12" type="TextureRect" parent="."]
+margin_left = 70.0
+margin_top = 380.0
 margin_right = 190.0
-margin_bottom = 510.0
-color = Color( 0, 0, 0, 1 )
+margin_bottom = 500.0
+rect_scale = Vector2( 0.5, 0.5 )
+texture = ExtResource( 2 )
+expand = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Chest13" type="TextureRect" parent="."]
+margin_left = 130.0
+margin_top = 380.0
+margin_right = 250.0
+margin_bottom = 500.0
+rect_scale = Vector2( 0.5, 0.5 )
+texture = ExtResource( 2 )
+expand = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Chest21" type="TextureRect" parent="."]
+margin_left = 10.0
+margin_top = 440.0
+margin_right = 130.0
+margin_bottom = 560.0
+rect_scale = Vector2( 0.5, 0.5 )
+texture = ExtResource( 2 )
+expand = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Chest22" type="TextureRect" parent="."]
+margin_left = 70.0
+margin_top = 440.0
+margin_right = 190.0
+margin_bottom = 560.0
+rect_scale = Vector2( 0.5, 0.5 )
+texture = ExtResource( 2 )
+expand = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Chest23" type="TextureRect" parent="."]
+margin_left = 130.0
+margin_top = 440.0
+margin_right = 250.0
+margin_bottom = 560.0
+rect_scale = Vector2( 0.5, 0.5 )
+texture = ExtResource( 2 )
+expand = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Chest31" type="TextureRect" parent="."]
+margin_left = 10.0
+margin_top = 500.0
+margin_right = 130.0
+margin_bottom = 620.0
+rect_scale = Vector2( 0.5, 0.5 )
+texture = ExtResource( 2 )
+expand = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Chest32" type="TextureRect" parent="."]
+margin_left = 70.0
+margin_top = 500.0
+margin_right = 190.0
+margin_bottom = 620.0
+rect_scale = Vector2( 0.5, 0.5 )
+texture = ExtResource( 2 )
+expand = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Chest33" type="TextureRect" parent="."]
+margin_left = 130.0
+margin_top = 500.0
+margin_right = 250.0
+margin_bottom = 620.0
+rect_scale = Vector2( 0.5, 0.5 )
+texture = ExtResource( 2 )
+expand = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="Coins" type="SpinBox" parent="."]
 margin_left = 10.0
-margin_top = 520.0
+margin_top = 570.0
 margin_right = 190.0
-margin_bottom = 550.0
+margin_bottom = 600.0
 max_value = 99999.0
 prefix = "Coins required:"
 __meta__ = {
@@ -131,9 +264,9 @@ __meta__ = {
 
 [node name="ElementList" type="ItemList" parent="."]
 margin_left = 10.0
-margin_top = 560.0
+margin_top = 610.0
 margin_right = 190.0
-margin_bottom = 880.0
+margin_bottom = 970.0
 allow_rmb_select = true
 max_columns = 3
 same_column_width = true
@@ -143,12 +276,24 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Errors" type="Label" parent="."]
+[node name="Messages" type="Label" parent="."]
 margin_left = 10.0
-margin_top = 890.0
+margin_top = 976.0
 margin_right = 190.0
 margin_bottom = 990.0
-text = "Errors:
-[none]"
+text = "[todo messages]"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+[connection signal="value_changed" from="ChestNumber" to="." method="_on_ChestNumber_value_changed"]
+[connection signal="gui_input" from="Chest11" to="." method="_on_Chest11_gui_input"]
+[connection signal="gui_input" from="Chest12" to="." method="_on_Chest12_gui_input"]
+[connection signal="gui_input" from="Chest13" to="." method="_on_Chest13_gui_input"]
+[connection signal="gui_input" from="Chest21" to="." method="_on_Chest21_gui_input"]
+[connection signal="gui_input" from="Chest22" to="." method="_on_Chest22_gui_input"]
+[connection signal="gui_input" from="Chest23" to="." method="_on_Chest23_gui_input"]
+[connection signal="gui_input" from="Chest31" to="." method="_on_Chest31_gui_input"]
+[connection signal="gui_input" from="Chest32" to="." method="_on_Chest32_gui_input"]
+[connection signal="gui_input" from="Chest33" to="." method="_on_Chest33_gui_input"]
 [connection signal="item_rmb_selected" from="ElementList" to="." method="_on_ElementList_item_rmb_selected"]
 [connection signal="item_selected" from="ElementList" to="." method="_on_ElementList_item_selected"]

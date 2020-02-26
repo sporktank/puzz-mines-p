@@ -4,8 +4,12 @@ extends Node2D
 const LEVEL_SIZE = Vector2(30, 20)
 enum {EDIT, PLAY}
 #const TIMER_INTERVAL = 16#36#12
-const SECONDS_PER_STEP = 0.25
+const SECONDS_PER_STEP = 0.25#0.22
 
+
+var level_set
+var level_number
+var level_name = ''
 
 var mode = EDIT
 var element_map = {}
@@ -13,6 +17,16 @@ var actions = []
 var next_actions = []
 var timer = 0.0
 
+var current_chest = 0
+var chest_contents = [
+        [['blank', 'blank', 'blank'], ['blank', 'blank', 'blank'], ['blank', 'blank', 'blank']],
+        [['blank', 'blank', 'blank'], ['blank', 'blank', 'blank'], ['blank', 'blank', 'blank']],
+        [['blank', 'blank', 'blank'], ['blank', 'blank', 'blank'], ['blank', 'blank', 'blank']],
+        [['blank', 'blank', 'blank'], ['blank', 'blank', 'blank'], ['blank', 'blank', 'blank']]
+    ]
+
+# TODO: Clean this stuff up
+var player_ref
 var coins_required = 0
 var coins_collected = 0
 
@@ -22,7 +36,8 @@ func restart():
     self.next_actions = []
     self.timer = 0.0
     self.coins_collected = 0
-    self.load_from_file()
+    if self.level_set and self.level_number:
+        self.load_from_file(self.level_set, self.level_number)
     
     
 func _ready():
@@ -125,6 +140,7 @@ func _process(delta):
 
 
 func clear_level():
+    self.current_chest = 0
     for e in $Elements.get_children():
         $Elements.remove_child(e)
         e.queue_free()
@@ -144,6 +160,12 @@ func get_element(x, y):
         return element
 
 
+func get_chest_contents():
+    var result = self.chest_contents[self.current_chest]
+    self.current_chest = (self.current_chest + 1) % 4
+    return result
+
+
 func set_element(x, y, element_name):
     if self.element_map.has([x,y]):
         var prev = self.element_map[[x,y]]
@@ -152,6 +174,8 @@ func set_element(x, y, element_name):
     var element = Global.ALL_ELEMENTS[element_name].instance().setup(x, y)
     $Elements.add_child(element)
     self.element_map[[x,y]] = element
+    if element.is_player():
+        self.player_ref = element
 
 
 func set_edit_mode():
@@ -172,8 +196,14 @@ func set_play_mode():
 func set_element_by_pixel(element_name, position):
     var x = int(position.x/Global.TILE_SIZE)
     var y = int(position.y/Global.TILE_SIZE)
-    if x >= 0 and y >= 0 and x < LEVEL_SIZE.x and y < LEVEL_SIZE.y:
+    if x >= 1 and y >= 1 and x < LEVEL_SIZE.x-1 and y < LEVEL_SIZE.y-1:
         self.set_element(x, y, element_name)
+
+
+func get_element_by_pixel(position):
+    var x = int(position.x/Global.TILE_SIZE)
+    var y = int(position.y/Global.TILE_SIZE)
+    return self.element_map[[x,y]].get_element_name()
 
 
 func to_json_():
@@ -185,7 +215,9 @@ func to_json_():
         element_map_names.append(row)
     return to_json({
             'element_map_names': element_map_names,
-            'coins_required': self.coins_required
+            'coins_required': self.coins_required,
+            'level_name': self.level_name,
+            'chest_contents': self.chest_contents
         })
 
 
@@ -200,18 +232,27 @@ func from_json(json):
             x += 1
         y += 1
     self.coins_required = dict.get('coins_required', 0)
+    self.level_name = dict.get('level_name', '[unnamed level]')
+    self.chest_contents = dict.get('chest_contents', self.chest_contents)
 
 
-func load_from_file():
+func load_from_file(level_set, level_number):
+    self.level_set = level_set
+    self.level_number = level_number
+    var filename = 'res://levels/%s/%d.json' % [level_set, level_number]
     var file = File.new()
-    file.open('res://levels/1.json', File.READ)
-    var json = file.get_line()
-    file.close()
-    self.from_json(json)
+    if file.file_exists(filename):
+        file.open(filename, File.READ)
+        self.from_json(file.get_line())
+        file.close()
+    else:
+        file.close()
+        self.clear_level()
+        self.save_to_file()
     
 
 func save_to_file():
     var file = File.new()
-    file.open('res://levels/1.json', File.WRITE)
+    file.open('res://levels/%s/%d.json' % [self.level_set, self.level_number], File.WRITE)
     file.store_line(self.to_json_())
     file.close()

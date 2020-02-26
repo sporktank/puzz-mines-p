@@ -51,7 +51,8 @@ func screen_pos(x=null, y=null):
 
 func remove_me():
     get_parent().remove_child(self)
-    self.queue_free()
+    if not self.is_player():
+        self.queue_free()
 
 
 func replace_me(element_name, extra_args={}):
@@ -114,6 +115,14 @@ func is_player():
     
     
 func is_exit():
+    return false
+    
+
+func is_door():
+    return false
+    
+    
+func is_lava():
     return false
     
 

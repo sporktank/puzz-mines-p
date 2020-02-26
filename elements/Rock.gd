@@ -30,6 +30,9 @@ func compute_actions():
         
     if self.e.is_blank() and self.se.is_blank() and self.s.is_rollable():
         return [Actions.Move.new(self, self.map_x+1, self.map_y, 0)]
+        
+    if self.s.is_lava():
+        return [Actions.Drown.new(self, self.map_x, self.map_y+1, 10)]
 
     # Testing this idea. -- like a "null"/Idle action each time.
     return [Actions.Wait.new(self, -10)]
@@ -37,7 +40,7 @@ func compute_actions():
 
 func animate_action(action, alpha):
     
-    if action is Actions.Move or (action is Actions.Push and action.element == self):
+    if action is Actions.Move or (action is Actions.Push and action.element == self) or action is Actions.Drown:
         self.position = self.screen_pos()*(1-alpha) + self.screen_pos(action.x, action.y)*alpha
         self.rotation = self.angle + alpha*(action.x - self.map_x)*PI/2
         
@@ -66,3 +69,6 @@ func apply_action(action):
         
     if action is Actions.Explode:
         self.replace_me('explosion', {'produce':action.get_produce(self)})
+        
+    if action is Actions.Drown:
+        self.remove_me()

@@ -49,6 +49,8 @@ class ActionMap:
         var num_collect = _count_class(list, Actions.Collect)
         var num_explode = _count_class(list, Actions.Explode)
         var num_wait = _count_class(list, Actions.Wait)
+        var num_push = _count_class(list, Actions.Push)
+        var num_rotate = _count_class(list, Actions.Rotate)
         
         # If all actions are moves, take top priority action only.
         if num_all == num_move:
@@ -58,6 +60,26 @@ class ActionMap:
             
         # If one move and one collect, that's fine.
         if num_move == 1 and num_collect == 1 and num_all == 2:
+            return
+            
+        # Or also including a wait, that's fine.
+        if num_move == 1 and num_collect == 1 and num_wait == 1 and num_all == 3:
+            return
+        
+        # If one wait and one collect, that's fine.
+        if num_wait == 1 and num_collect == 1 and num_all == 2:
+            return
+            
+        # If one wait and one push, that's fine.
+        if num_wait == 1 and num_push == 1 and num_all == 2:
+            return
+            
+        # If one rotate and one push, that's fine.
+        if num_rotate == 1 and num_push == 1 and num_all == 2:
+            return
+            
+        # If one wait and one explode, that's fine.
+        if num_wait == 1 and num_explode == 1 and num_all == 2:
             return
             
         # If only one explosion, that takes priority.
@@ -116,15 +138,33 @@ class Wait extends Action:
 class Move extends Action:
     var x
     var y
-    func _init(element, x, y, priority):
+    var bomb
+    func _init(element, x, y, priority, bomb=false):
         self.element = element
         self.x = x
         self.y = y
         self.priority = priority
+        self.bomb = bomb
     func get_all_xy():
         return [[self.element.map_x, self.element.map_y], [x, y]]
     func to_string():
-        return 'Move(%s, dx=%d, dy=%d, priority=%d)' % [self.element.get_element_name(), self.x-self.element.map_x, self.y-self.element.map_y, self.priority]
+        return 'Move(%s, dx=%d, dy=%d, priority=%d, bomb=%s)' % [self.element.get_element_name(), self.x-self.element.map_x, self.y-self.element.map_y, self.priority, self.bomb]
+
+
+class Drown extends Action:
+    var x
+    var y
+    var bomb
+    func _init(element, x, y, priority, bomb=false):
+        self.element = element
+        self.x = x
+        self.y = y
+        self.priority = priority
+        self.bomb = bomb
+    func get_all_xy():
+        return [[self.element.map_x, self.element.map_y], [x, y]]
+    func to_string():
+        return 'Drown(%s, dx=%d, dy=%d, priority=%d, bomb=%s)' % [self.element.get_element_name(), self.x-self.element.map_x, self.y-self.element.map_y, self.priority, self.bomb]
         
         
 class Exit extends Action:
@@ -157,18 +197,38 @@ class Push extends Action:
     var by
     var x
     var y
-    func _init(element, by, x, y, priority):
+    var drown
+    func _init(element, by, x, y, priority, drown=false):
         self.element = element
         self.by = by
         self.x = x
         self.y = y
         self.priority = priority
+        self.drown = drown
     func get_elements():
         return [self.by, self.element]  # NOTE: Sublte order dependency here.. might try to remove this.
     func get_all_xy():
         return [[self.element.map_x, self.element.map_y], [self.by.map_x, self.by.map_y], [self.x, self.y]]
     func to_string():
-        return 'Push(%s, by=%s, dx=%d, dy=%d, priority=%d)' % [self.element.get_element_name(), self.by.get_element_name(), self.x-self.element.map_x, self.y-self.element.map_y, self.priority]
+        return 'Push(%s, by=%s, dx=%d, dy=%d, priority=%d, drown=%s)' % [self.element.get_element_name(), self.by.get_element_name(), self.x-self.element.map_x, self.y-self.element.map_y, self.priority, self.drown]
+
+
+class Through extends Action:
+    var door
+    var x
+    var y
+    func _init(element, door, x, y, priority):
+        self.element = element
+        self.door = door
+        self.x = x
+        self.y = y
+        self.priority = priority
+    func get_elements():
+        return [self.door, self.element]
+    func get_all_xy():
+        return [[self.element.map_x, self.element.map_y], [self.door.map_x, self.door.map_y], [self.x, self.y]]
+    func to_string():
+        return 'Through(%s, door=%s, dx=%d, dy=%d, priority=%d)' % [self.element.get_element_name(), self.door.get_element_name(), self.x-self.element.map_x, self.y-self.element.map_y, self.priority]
         
         
 class Rotate extends Action:

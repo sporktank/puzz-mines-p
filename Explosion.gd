@@ -45,7 +45,7 @@ func apply_action(action):
     if self.wait == 0 and action is Actions.Wait:
         self.replace_me(self.produce)
     self.wait = 0
-    $AnimatedSprite.rotation = PI/4
+    #$AnimatedSprite.rotation = PI/4
         
 #    if self.produce == 'explosion':
 #        print('new explosion!')

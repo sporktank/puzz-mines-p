@@ -14,10 +14,13 @@ func is_vpushable():
 
 
 func get_produce():
-    return [['steel', 'steel', 'steel'], ['steel', 'steel', 'steel'], ['steel', 'steel', 'steel']]
+    #return [['steel', 'steel', 'steel'], ['steel', 'steel', 'steel'], ['steel', 'steel', 'steel']]
+    return get_parent().get_parent().get_chest_contents() # Now this is hacky...
 
 
 func compute_actions():
+
+    $Number.text = str(get_parent().get_parent().current_chest + 1)
 
     # Testing this idea. -- like a "null"/Idle action each time.
     return [Actions.Wait.new(self, -10)]
@@ -35,7 +38,10 @@ func animate_action(action, alpha):
 func apply_action(action):
 
     if action is Actions.Push and action.element == self:
-        self.setup(action.x, action.y)
+        if action.drown:
+            self.remove_me()
+        else:
+            self.setup(action.x, action.y)
 
     if action is Actions.Explode:
         if action.element == self:
