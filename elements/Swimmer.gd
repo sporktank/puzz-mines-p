@@ -34,9 +34,9 @@ func compute_actions():
     
     # Kill.
     if self.is_facing(self.s) and self.s.is_player():
-        return [Actions.Explode.new(self.s, false, self.s.get_produce(), 4)]  # Lower priority allowing player to walk past.
+        return [Actions.Explode.new(self.s, false, self.s.get_produce(), 16)]  # 2020-02-26: Changed to higher priority
     if self.is_facing(self.n) and self.n.is_player():
-        return [Actions.Explode.new(self.n, false, self.n.get_produce(), 4)]
+        return [Actions.Explode.new(self.n, false, self.n.get_produce(), 6)]
     
     # Rotate right.
     return [Actions.Rotate.new(self, null, 20)]

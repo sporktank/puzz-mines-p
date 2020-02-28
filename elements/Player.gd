@@ -67,11 +67,11 @@ func compute_actions():
         # Click.
         if self.intend_click:
             if self.intend_left and self.w.is_collectable() and not self.w.is_blank():
-                return [Actions.Collect.new(self.w, self, 5), Actions.Wait.new(self, -10)]
+                return [Actions.Collect.new(self.w, self, 11), Actions.Wait.new(self, -10)]
             if self.intend_right and self.e.is_collectable() and not self.e.is_blank():
-                return [Actions.Collect.new(self.e, self, 5), Actions.Wait.new(self, -10)]
+                return [Actions.Collect.new(self.e, self, 11), Actions.Wait.new(self, -10)]
             if self.intend_up and self.n.is_collectable() and not self.n.is_blank():
-                return [Actions.Collect.new(self.n, self, 5), Actions.Wait.new(self, -10)]
+                return [Actions.Collect.new(self.n, self, 11), Actions.Wait.new(self, -10)]
             if self.intend_down and self.s.is_collectable() and not self.s.is_blank():
                 return [Actions.Collect.new(self.s, self, 15), Actions.Wait.new(self, -10)]
             

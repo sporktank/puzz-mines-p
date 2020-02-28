@@ -59,8 +59,8 @@ class ActionMap:
             return
             
         # If one move and one collect, that's fine.
-        if num_move == 1 and num_collect == 1 and num_all == 2:
-            return
+        #if num_move == 1 and num_collect == 1 and num_all == 2:
+        #    return
             
         # Or also including a wait, that's fine.
         if num_move == 1 and num_collect == 1 and num_wait == 1 and num_all == 3:

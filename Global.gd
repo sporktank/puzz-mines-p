@@ -36,8 +36,8 @@ const ALL_ELEMENTS = {
 var ALL_LEVEL_SETS = []
 
 var current_file = 0
-var current_level_set = '01_tutorial'
-var current_level_number = 1
+var current_level_set = '02_sporko'
+var current_level_number = 6
 var on_exit = 'quit'
 
 var progress
