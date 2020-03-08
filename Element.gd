@@ -51,7 +51,7 @@ func screen_pos(x=null, y=null):
 
 func remove_me():
     get_parent().remove_child(self)
-    if not self.is_player():
+    if not self.is_player() and not self.is_blank():  # !!!
         self.queue_free()
 
 

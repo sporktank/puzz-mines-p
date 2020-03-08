@@ -96,10 +96,10 @@ class ActionMap:
         #if num_explode + num_wait == num_all:
         #    return
         
-        print('Unhandled conflict of %d actions (taking top priority action(s) only by default):' % [num_all])
-        for action in list:
-            print(action.to_string())
-        print('.')
+#        print('Unhandled conflict of %d actions (taking top priority action(s) only by default):' % [num_all])
+#        for action in list:
+#            print(action.to_string())
+#        print('.')
         for i in range(0, num_all):
             if list[i].priority != list[num_all-1].priority:
                 list[i].invalidate()

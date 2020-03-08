@@ -36,8 +36,8 @@ const ALL_ELEMENTS = {
 var ALL_LEVEL_SETS = []
 
 var current_file = 0
-var current_level_set = '02_sporko'
-var current_level_number = 6
+var current_level_set = '01_tutorial'
+var current_level_number = 1
 var on_exit = 'quit'
 
 var progress
@@ -77,8 +77,8 @@ func load_progress():
         for f in range(4):
             var p = {}
             for i in ALL_LEVEL_SETS:
-                p[i] = 1
-                #p[i] = 10 if f == 3 else 1
+                #p[i] = 1
+                p[i] = 10 if f == 3 else 1  # going to leave it like this to allow people to explore.
             self.progress.append(p)
         self.save_progress()
     save.open('user://progress.save', File.READ)

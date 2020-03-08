@@ -13,6 +13,12 @@ func _ready():
 func _process(delta):
     
     $FPS.text = 'FPS: ' + str(Engine.get_frames_per_second())
+    #$FPS.text = '%s | %s | %s | %s' % [
+    #        Engine.get_frames_drawn(),
+    #        Engine.get_frames_per_second(),
+    #        1,
+    #        1
+    #    ]
     
     #$HUD/Required.text = "coins: %d / %d" % [$Level.coins_collected, $Level.coins_required]
     $HUD/CoinCount.text = "%d / %d" % [$Level.coins_collected, $Level.coins_required]
@@ -23,7 +29,7 @@ func _process(delta):
     $HUD/YellowKey.modulate.a = 1.0 if $Level.player_ref.has_collected_key['yellow'] else 0.1
     
     $HUD/Previous.disabled = Global.current_level_number == 1
-    $HUD/Next.disabled = Global.current_level_number == Global.progress[Global.current_file][Global.current_level_set]
+    $HUD/Next.disabled = Global.current_level_number == Global.progress[Global.current_file][Global.current_level_set] or Global.current_level_number == Global.MAX_LEVEL
     
     if Input.is_action_just_pressed("restart"):
         _on_Restart_pressed()

@@ -86,7 +86,7 @@ func compute_actions():
             if self.intend_up and self.n.is_collectable():
                 return [Actions.Move.new(self, self.map_x, self.map_y-1, 5, will_bomb)] + ([] if self.n.is_blank() else [Actions.Collect.new(self.n, self, 5)])
             if self.intend_down and self.s.is_collectable():
-                return [Actions.Move.new(self, self.map_x, self.map_y+1, 15, will_bomb)] + ([] if self.s.is_blank() else [Actions.Collect.new(self.s, self, 15)])
+                return [Actions.Move.new(self, self.map_x, self.map_y+1, 5, will_bomb)] + ([] if self.s.is_blank() else [Actions.Collect.new(self.s, self, 5)])
                 
             # Push.
             if self.intend_left and self.w.is_pushable() and self.w.w.is_blank():
@@ -188,7 +188,7 @@ func animate_action(action, alpha):
             self.move_list.append(new_move)
         else:
             # Alternate priority of vertical/horizontal movement.
-            # TODO: Dad wants priority given to the direction you're already travelling..
+            # TODO: NPS wants priority given to the direction you're already travelling..
             if self.parity > 0:
                 self.move_list.append([new_move[0], 0, new_move[2], new_move[3]])
                 self.move_list.append([0, new_move[1], new_move[2], new_move[3]])

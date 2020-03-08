@@ -46,7 +46,6 @@ func _process(delta):
 func _input(event):
     if event is InputEventKey and event.scancode == KEY_CONTROL:
         self.ctrl_click = event.pressed
-        print(self.ctrl_click)
 
 
 func _on_LevelOverlay_gui_input(event):

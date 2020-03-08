@@ -49,7 +49,7 @@ func compute_actions():
     if self.is_facing(self.w) and self.w.is_player():
         return [Actions.Explode.new(self.w, false, self.w.get_produce(), 6)]  # 2020-02-26: Changed to higher priority
     if self.is_facing(self.s) and self.s.is_player():
-        return [Actions.Explode.new(self.s, false, self.s.get_produce(), 16)]
+        return [Actions.Explode.new(self.s, false, self.s.get_produce(), 6)]
     if self.is_facing(self.e) and self.e.is_player():
         return [Actions.Explode.new(self.e, false, self.e.get_produce(), 6)]
     if self.is_facing(self.n) and self.n.is_player():

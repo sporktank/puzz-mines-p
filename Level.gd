@@ -13,6 +13,7 @@ var level_name = ''
 
 var mode = EDIT
 var element_map = {}
+var blank_map = {}
 var actions = []
 var next_actions = []
 var timer = 0.0
@@ -42,33 +43,56 @@ func restart():
     
 func _ready():
     self.restart()
+    for y in range(1, self.LEVEL_SIZE.y-1):
+        for x in range(1, self.LEVEL_SIZE.x-1):
+            self.blank_map[[x,y]] = Global.ALL_ELEMENTS['blank'].instance().setup(x, y)
 
 
 func compute_actions(next_actions):
         
     # Setup neighbourhoods.
+    var s0 = OS.get_ticks_usec()
+#    for y in range(1, self.LEVEL_SIZE.y-1):
+#        for x in range(1, self.LEVEL_SIZE.x-1):
+#            if self.element_map.has([x,y]):
+#                var element = element_map[[x,y]]
+#                element.set_neighbourhood(
+#                        self.get_element(x-1, y-1), self.get_element(x  , y-1), self.get_element(x+1, y-1), 
+#                        self.get_element(x-1, y  ),                             self.get_element(x+1, y  ), 
+#                        self.get_element(x-1, y+1), self.get_element(x  , y+1), self.get_element(x+1, y+1)
+#                    )
     for y in range(1, self.LEVEL_SIZE.y-1):
         for x in range(1, self.LEVEL_SIZE.x-1):
-            if self.element_map.has([x,y]):
-                var element = element_map[[x,y]]
-                element.set_neighbourhood(
-                        self.get_element(x-1, y-1), self.get_element(x  , y-1), self.get_element(x+1, y-1), 
-                        self.get_element(x-1, y  ),                             self.get_element(x+1, y  ), 
-                        self.get_element(x-1, y+1), self.get_element(x  , y+1), self.get_element(x+1, y+1)
-                    )
+            if not self.element_map.has([x,y]):
+                self.blank_map[[x,y]].animate_explode(0.0)
+                self.element_map[[x,y]] = self.blank_map[[x,y]]
+                $Elements.add_child(self.blank_map[[x,y]])
+    for y in range(1, self.LEVEL_SIZE.y-1):
+        for x in range(1, self.LEVEL_SIZE.x-1):
+            self.element_map[[x,y]].set_neighbourhood(
+                    self.element_map[[x-1, y-1]], self.element_map[[x  , y-1]], self.element_map[[x+1, y-1]], 
+                    self.element_map[[x-1, y  ]],                               self.element_map[[x+1, y  ]], 
+                    self.element_map[[x-1, y+1]], self.element_map[[x  , y+1]], self.element_map[[x+1, y+1]]
+                )
+#    print('A: ', OS.get_ticks_usec()-s0)
     
     # Compute actions.
+    s0 = OS.get_ticks_usec()
     var action_map = Actions.ActionMap.new(LEVEL_SIZE)
     for action in next_actions:
         action_map.add_action(action)
-    for element in $Elements.get_children():
+#    for element in $Elements.get_children():
+    for element in self.element_map.values():
         var actions = element.compute_actions()
         if actions:
             for action in actions:
                 action_map.add_action(action)
+#    print('B: ', OS.get_ticks_usec()-s0)
 
     # Resolve conflicts.
+    s0 = OS.get_ticks_usec()
     action_map.resolve_conflicts()
+#    print('C: ', OS.get_ticks_usec()-s0)
     return action_map.get_actions()
 
 
@@ -77,33 +101,51 @@ func animate_actions(actions, alpha):
         for element in action.get_elements():
             element.animate_action(action, alpha)
             
+            
+# Example output.
+# A: 13251
+# B: 1538
+# C: 130
+# D: 422
+# E: 3525
+# Okay, getting somewhere.
+
 
 func apply_actions(actions):
     
     var result = []
     
+    var s0 = OS.get_ticks_usec()
     for action in actions:
         for element in action.get_elements():
-            # Testing: skip if element already removed.
+            # Skip if element already removed.
             if element.get_parent() == null:
-                print('Skipping action on orphaned element (%s).' % [element.to_string()])
+                #print('Skipping action on orphaned element (%s).' % [element.to_string()])
                 continue
             var next_actions = element.apply_action(action)
             if next_actions:
                 for next_action in next_actions:
                     result.append(next_action)
+#    print('D: ', OS.get_ticks_usec()-s0)
                     
     #for element in $Elements.get_children():
     #    element.apply_action('idle')
                     
+    s0 = OS.get_ticks_usec()
+#    var elements = self.element_map.values()
     self.element_map = {}
+#    for element in elements:
+#        if is_instance_valid(element) and not element.is_blank():
+#            self.element_map[[element.map_x, element.map_y]] = element
     for element in $Elements.get_children():
         if element.is_blank():
             $Elements.remove_child(element)
-            element.queue_free()
+            #element.queue_free()
         else:
             self.element_map[[element.map_x, element.map_y]] = element
-        
+#    print('E: ', OS.get_ticks_usec()-s0)    
+#    print(' ')
+    
     return result
 
 
@@ -133,9 +175,26 @@ func _process(delta):
     if self.mode == PLAY:
         self.timer += clamp(delta, 0, SECONDS_PER_STEP)
         if self.timer >= SECONDS_PER_STEP:
+            
+            var s0 = OS.get_ticks_usec()
+            var n0 = self.actions.size()
+            var a0 = $Elements.get_child_count()
             self.next_actions = self.apply_actions(self.actions)
+            
+            var s1 = OS.get_ticks_usec()
+            var n1 = self.next_actions.size()
+            var a1 = $Elements.get_child_count()
             self.actions = self.compute_actions(self.next_actions)
+            
+            var s2 = OS.get_ticks_usec()
+            #print(s1-s0, ',', n0, ',', a0, ',', s2-s1, ',', n1, ',', a1)
+            
             self.timer -= SECONDS_PER_STEP
+        else:
+            # Make each frame take roughly the same time.
+            self.animate_actions(self.actions, self.timer/SECONDS_PER_STEP)
+            self.compute_actions(self.next_actions)
+            #pass
         self.animate_actions(self.actions, self.timer/SECONDS_PER_STEP)
 
 
