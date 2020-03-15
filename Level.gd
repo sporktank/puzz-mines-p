@@ -192,8 +192,10 @@ func _process(delta):
             self.timer -= SECONDS_PER_STEP
         else:
             # Make each frame take roughly the same time.
-            self.animate_actions(self.actions, self.timer/SECONDS_PER_STEP)
+            #self.animate_actions(self.actions, self.timer/SECONDS_PER_STEP)
+            Global.dummy_compute_actions = true
             self.compute_actions(self.next_actions)
+            Global.dummy_compute_actions = false
             #pass
         self.animate_actions(self.actions, self.timer/SECONDS_PER_STEP)
 

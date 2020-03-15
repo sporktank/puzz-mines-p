@@ -48,6 +48,10 @@ func collect_bomb():
 
 func compute_actions():
     
+    # This is lame, trying to get smooth timing across all platforms.
+    if Global.dummy_compute_actions:
+        return
+    
     self.parity *= -1
     var move_list_copy = self.move_list
     self.move_list = []

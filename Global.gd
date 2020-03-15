@@ -42,6 +42,9 @@ var on_exit = 'quit'
 
 var progress
 
+# This is lame, trying to get smooth timing across all platforms.
+var dummy_compute_actions = false
+
 
 func _ready():
 #    var dir = Directory.new()
